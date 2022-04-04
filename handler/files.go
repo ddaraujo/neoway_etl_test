@@ -1,24 +1,13 @@
 package handler
 
 import (
-    "context"
-    "fmt"
-    "net/http"
-    "strconv"
+	"fmt"
 	"io/ioutil"
-    "github.com/go-chi/chi"
-    "github.com/go-chi/render"
-    "gitlab.com/idoko/bucketeer/db"
-    "gitlab.com/idoko/bucketeer/models"
+	"net/http"
 )
 
-//var itemIDKey = "itemID"
-func files(router chi.Router) {
-	router.Put("/upload", FileUpload)                     // REDIRECIONA PARA O UPLOAD DO ARQUIVO
-}
-
-// File upload method
-func FileUpload(w http.ResponseWriter, r *http.Request) {
+// File upload function
+func upload(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("File Upload Endpoint Hit")
 	file, handler, err := r.FormFile("myFile")
@@ -39,22 +28,22 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-    defer tempFile.Close()
+	defer tempFile.Close()
 
-    // read all of the contents of our uploaded file into a
-    // byte array
-    fileBytes, err := ioutil.ReadAll(file)
-    if err != nil {
-        fmt.Println(err)
-    }
+	// read all of the contents of our uploaded file into a
+	// byte array
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-    // write this byte array to our temporary file
-    tempFile.Write(fileBytes)
+	// write this byte array to our temporary file
+	tempFile.Write(fileBytes)
 
 	// return that we have successfully uploaded our file to server!
 	fmt.Println("Successfully Uploaded File to Server")
 	fmt.Fprintf(w, "Successfully Uploaded File to Server\n")
 
 	// Save file data to postgres DB
-	PgUploadData(fmt.Sprintf("%s", tempFile.Name()))
+	dbInstance.PgUploadData(fmt.Sprintf("%s", tempFile.Name()))
 }
