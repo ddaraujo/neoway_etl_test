@@ -52,7 +52,7 @@ DROP TABLE IF EXISTS public.imported_files;
 CREATE TABLE IF NOT EXISTS public.imported_files
 (
     dt_importacao date NOT NULL DEFAULT CURRENT_DATE,
-    txt_arquivo text COLLATE pg_catalog."default" NOT NULL
+    txt_dados_cliente text COLLATE pg_catalog."default" NOT NULL
 )
 
 TABLESPACE pg_default;

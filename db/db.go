@@ -1,5 +1,4 @@
 package db
-
 import (
     "database/sql"
     "fmt"
@@ -7,7 +6,7 @@ import (
     _ "github.com/lib/pq"
 )
 const (
-    HOST = "db"
+    HOST = "database"
     PORT = 5432
 )
 // ErrNoMatch is returned when we request a row that doesn't exist
@@ -15,11 +14,10 @@ var ErrNoMatch = fmt.Errorf("no matching record")
 type Database struct {
     Conn *sql.DB
 }
-
 func Initialize(username, password, database string) (Database, error) {
     db := Database{}
     dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-        HOST, PORT, username, password, database)
+        HOST, PORT, "postgres", "555407", database)
     conn, err := sql.Open("postgres", dsn)
     if err != nil {
         return db, err
