@@ -1,15 +1,12 @@
 package db
 
 import (
-    "database/sql"
-    "gitlab.com/idoko/bucketeer/models"
+	"database/sql"
 	"fmt"
-	"path/filepath"
 	"os"
-	"log"
+	"path/filepath"
 	//"database/sql"
 )
-
 
 /*func (db Database) UpdateItem(itemId int, itemData models.Item) (models.Item, error) {
     item := models.Item{}
@@ -23,7 +20,6 @@ import (
     }
     return item, nil
 }*/
-
 
 // Load file into imported_files table
 func (db Database) PgUploadData(importedFile string) error {
@@ -46,12 +42,12 @@ func (db Database) PgUploadData(importedFile string) error {
 	// Copy data to DB
 	query := `COPY imported_files(txt_dados_cliente) FROM $1;`
 	_, err := db.Conn.Exec(query, importedFile)
-    switch err {
-    case sql.ErrNoRows:
-        return ErrNoMatch
-    default:
-        return err
-    }
+	switch err {
+	case sql.ErrNoRows:
+		return ErrNoMatch
+	default:
+		return err
+	}
 	//sql := fmt.Sprintf(`COPY imported_files(txt_dados_cliente) FROM '%s';`, file)
 
 	// Execute statement
