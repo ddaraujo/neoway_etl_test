@@ -1,1 +1,3 @@
 postgres-data
+coverage.out
+handler/errors.go
