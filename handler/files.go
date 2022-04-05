@@ -40,10 +40,14 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	// write this byte array to our temporary file
 	tempFile.Write(fileBytes)
 
+	// Save file data to postgres DB
+	insertErr := dbInstance.PgUploadData(fmt.Sprintf("%s", tempFile.Name()))
+
+	if insertErr != nil {
+		panic(insertErr)
+	}
+
 	// return that we have successfully uploaded our file to server!
 	fmt.Println("Successfully Uploaded File to Server")
 	fmt.Fprintf(w, "Successfully Uploaded File to Server\n")
-
-	// Save file data to postgres DB
-	dbInstance.PgUploadData(fmt.Sprintf("%s", tempFile.Name()))
 }
