@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"text/template"
 
 	"github.com/ddaraujo/neoway_etl_test/db"
@@ -34,16 +35,12 @@ func NewHandler(db db.Database) http.Handler {
 	myRouter.HandleFunc("/items/valid/lastSale/{cnpj}", getAllItemsLastSaleCnpj).Methods("GET")         // Gel all valid items by cnpj (last sale)
 	myRouter.HandleFunc("/items/valid/frequentSale/{cnpj}", getAllItemsFrequentSaleCnpj).Methods("GET") // Get all valid items by cnpj (frequent sale)
 	myRouter.HandleFunc("/items/valid/count", getValidRecordsCount)                                     // Get all valid records count
-	//myRouter.HandleFunc("/items/valid/delete", deleteValidRecords)        // Delete all valid records
+	myRouter.HandleFunc("/items/valid/delete", deleteValidItems)                                        // Delete all valid records
 
 	// Invalid Items Routes (handler/items.go)
 	myRouter.HandleFunc("/items/invalid", getAllInvalidItems).Methods("GET")
 	myRouter.HandleFunc("/items/invalid/count", getInvalidRecordsCount) // Get all invalid (rejected) records count
-	//myRouter.HandleFunc("/items/invalid/delete", deleteInvalidRecords)        // Delete all invalid records
-
-	// Database management routes
-	//myRouter.HandleFunc("/file/count", getAllValidItems)                 // Get all imported (RAW) data
-	//myRouter.HandleFunc("/file/delete", deleteImportedFile)         // Delete all imported RAW data
+	myRouter.HandleFunc("/items/invalid/delete", deleteInvalidItems)    // Delete all invalid records
 
 	log.Fatal(http.ListenAndServe(":8888", myRouter))
 
@@ -62,4 +59,12 @@ func displayTemplate(w http.ResponseWriter, page string, data interface{}) {
 func landingPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show landing page")
 	displayTemplate(w, "index", nil)
+}
+
+// Sanitize REST input data removing - . and /
+func sanitize(data string) string {
+	data = strings.Replace(data, ".", "", -1)
+	data = strings.Replace(data, "-", "", -1)
+	data = strings.Replace(data, "/", "", -1)
+	return data
 }
