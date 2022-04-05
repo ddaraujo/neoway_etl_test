@@ -1,6 +1,4 @@
---
 -- Name: fc_valida_cnpj(character varying, boolean); Type: FUNCTION; Schema: public; Owner: postgres
---
 CREATE FUNCTION public.fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean DEFAULT false) RETURNS boolean
     LANGUAGE plpgsql
     AS $_$
@@ -68,24 +66,16 @@ $_$;
 
 ALTER FUNCTION public.fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean) OWNER TO postgres;
 
---
 -- Name: FUNCTION fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean); Type: COMMENT; Schema: public; Owner: postgres
---
 COMMENT ON FUNCTION public.fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean) IS 'CNPJ validation function';
 
-
---
 -- Name: dm_cnpj; Type: DOMAIN; Schema: public; Owner: postgres
---
 CREATE DOMAIN public.dm_cnpj AS character varying(22)
 	CONSTRAINT dm_cnpj_check CHECK (public.fc_valida_cnpj(VALUE, true));
 
 ALTER DOMAIN public.dm_cnpj OWNER TO postgres;
 
---
 -- Name: fc_valida_cpf(character varying, boolean); Type: FUNCTION; Schema: public; Owner: postgres
---
-
 CREATE FUNCTION public.fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean DEFAULT false) RETURNS boolean
     LANGUAGE plpgsql
     AS $_$
@@ -151,26 +141,17 @@ $_$;
 
 ALTER FUNCTION public.fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean) OWNER TO postgres;
 
---
 -- Name: FUNCTION fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean); Type: COMMENT; Schema: public; Owner: postgres
---
-
 COMMENT ON FUNCTION public.fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean) IS 'CPF validation function';
 
---
 -- Name: dm_cpf; Type: DOMAIN; Schema: public; Owner: postgres
---
-
 CREATE DOMAIN public.dm_cpf AS character varying(19)
 	CONSTRAINT dm_cpf_check CHECK (public.fc_valida_cpf(VALUE, true));
 
 
 ALTER DOMAIN public.dm_cpf OWNER TO postgres;
 
---
 -- Name: fc_convert_money_to_real(character varying); Type: FUNCTION; Schema: public; Owner: postgres
---
-
 CREATE FUNCTION public.fc_convert_money_to_real(ds_value character varying) RETURNS character varying
     LANGUAGE sql
     AS $_$
@@ -181,10 +162,7 @@ $_$;
 
 ALTER FUNCTION public.fc_convert_money_to_real(ds_value character varying) OWNER TO postgres;
 
---
 -- Name: fc_insert_new_customer_data(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
 CREATE FUNCTION public.fc_insert_new_customer_data() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
@@ -258,10 +236,7 @@ $$;
 
 ALTER FUNCTION public.fc_insert_new_customer_data() OWNER TO postgres;
 
---
 -- Name: remove_accent(text); Type: FUNCTION; Schema: public; Owner: postgres
---
-
 CREATE FUNCTION public.remove_accent(p_text text) RETURNS text
     LANGUAGE sql
     AS $_$  
@@ -272,7 +247,3 @@ CREATE FUNCTION public.remove_accent(p_text text) RETURNS text
  $_$;
 
 ALTER FUNCTION public.remove_accent(p_text text) OWNER TO postgres;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
