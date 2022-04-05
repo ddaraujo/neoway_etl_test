@@ -1,66 +1,70 @@
--- Table: public.customer_data
-DROP TABLE IF EXISTS public.customer_data;
+--
+-- Name: customer_data; Type: TABLE; Schema: public; Owner: postgres
+--
 
-CREATE TABLE IF NOT EXISTS public.customer_data
-(
-    cpf dm_cpf COLLATE pg_catalog."default",
+CREATE TABLE public.customer_data (
+    cpf public.dm_cpf,
     private integer,
     incompleto integer,
     dt_ultima_compra date,
     vlr_ticket_medio real,
     vlr_ticket_ultima_compra real,
-    cnpj_loja_mais_frequente dm_cnpj COLLATE pg_catalog."default",
-    cnpj_loja_ultima_compra dm_cnpj COLLATE pg_catalog."default"
-)
+    cnpj_loja_mais_frequente public.dm_cnpj,
+    cnpj_loja_ultima_compra public.dm_cnpj
+);
 
-TABLESPACE pg_default;
+ALTER TABLE public.customer_data OWNER TO postgres;
 
-ALTER TABLE IF EXISTS public.customer_data
-    OWNER to nwpguser;
+--
+-- Name: TABLE customer_data; Type: COMMENT; Schema: public; Owner: postgres
+--
 
-COMMENT ON TABLE public.customer_data
-    IS 'Store customer imported data';
-
-
--- Table: public.customer_data_rejected
-DROP TABLE IF EXISTS public.customer_data_rejected;
-
-CREATE TABLE IF NOT EXISTS public.customer_data_rejected
-(
-    cpf character varying(255) COLLATE pg_catalog."default",
-    int_private character varying(255) COLLATE pg_catalog."default",
-    int_incomplete character varying(255) COLLATE pg_catalog."default",
-    dt_ultima_compra character varying(255) COLLATE pg_catalog."default",
-    vlr_ticket_medio character varying(255) COLLATE pg_catalog."default",
-    vlr_ticket_ultima_compra character varying(255) COLLATE pg_catalog."default",
-    cnpj_loja_mais_frequente character varying(255) COLLATE pg_catalog."default",
-    cnpj_loja_ultima_compra character varying(255) COLLATE pg_catalog."default"
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.customer_data_rejected
-    OWNER to nwpguser;
-
-COMMENT ON TABLE public.customer_data_rejected
-    IS 'Customer rejected data (Does not fit customer data pattern)';
+COMMENT ON TABLE public.customer_data IS 'Store customer imported data';
 
 
--- Table: public.imported_files
-DROP TABLE IF EXISTS public.imported_files;
+--
+-- Name: customer_data_rejected; Type: TABLE; Schema: public; Owner: postgres
+--
 
-CREATE TABLE IF NOT EXISTS public.imported_files
-(
-    dt_importacao date NOT NULL DEFAULT CURRENT_DATE,
-    txt_dados_cliente text COLLATE pg_catalog."default" NOT NULL
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.imported_files
-    OWNER to nwpguser;
-
-COMMENT ON TABLE public.imported_files
-    IS 'This table stores imported files (Full text)';
+CREATE TABLE public.customer_data_rejected (
+    cpf text,
+    private text,
+    incompleto text,
+    dt_ultima_compra text,
+    vlr_ticket_medio text,
+    vlr_ticket_ultima_compra text,
+    cnpj_loja_mais_frequente text,
+    cnpj_loja_ultima_compra text
+);
 
 
+ALTER TABLE public.customer_data_rejected OWNER TO postgres;
+
+--
+-- Name: TABLE customer_data_rejected; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE public.customer_data_rejected IS 'Customer rejected data (Does not fit customer data pattern)';
+
+--
+-- Name: imported_files; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.imported_files (
+    dt_importacao date DEFAULT CURRENT_DATE NOT NULL,
+    txt_dados_cliente text NOT NULL
+);
+
+ALTER TABLE public.imported_files OWNER TO postgres;
+
+--
+-- Name: TABLE imported_files; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE public.imported_files IS 'This table stores imported files (Full text)';
+
+--
+-- Name: imported_files trg_import_customer_data; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER trg_import_customer_data AFTER INSERT OR UPDATE ON public.imported_files FOR EACH STATEMENT EXECUTE FUNCTION public.fc_insert_new_customer_data();
