@@ -32,7 +32,7 @@ $ docker compose up --build
 + Utilize a API ou PGadmin para checar os dados.
 
 
-## Utilizando a API
+## Utilizando a API de consulta aos dados
 
 * **[GET] /items/valid**   ->  retorna todos os dados importados válidos.
 * **[GET] /items/valid/cpf/{cpf}**   ->  retorna todos os dados importados válidos por CPF (Apenas números).
