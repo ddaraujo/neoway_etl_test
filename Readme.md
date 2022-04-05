@@ -87,7 +87,8 @@ Para fins de avaliação, o database estará exposto fora do docker, porém esta
 └── README.md
 ```
 
-**db:** Pacote responsável pela interação direta com o banco de dados, separando as camadas de acesso ao DB do restante da aplicação.**handler:** Cria os handlers do app e as rodas da API utilizando gorilla/mux.  
+**db:** Pacote responsável pela interação direta com o banco de dados, separando as camadas de acesso ao DB do restante da aplicação.  
+**handler:** Cria os handlers do app e as rodas da API utilizando gorilla/mux.  
 **models:** Structs de objetos para acesso e consulta ao database ou transformados em formato JSON.  
 **sql:** Scripts de inicializacao das tabelas, funcões, triggers, etc.  
 **.env:** Variáveis de ambiente utilizadas pela aplicação (conexão ao database).  
