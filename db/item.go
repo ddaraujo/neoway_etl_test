@@ -47,7 +47,7 @@ func (db Database) GetAllInvalidItems() (*models.ItemList, error) {
 // Get all valid items by CPF
 func (db Database) GetAllItemsByCpf(itemCpf string) (*models.ItemList, error) {
 	list := &models.ItemList{}
-	query := `SELECT * FROM customer_data WHERE cpf = $1;`
+	query := `SELECT * FROM customer_data WHERE cpf = regexp_replace($1,'([0-9]{3})([0-9]{3})([0-9]{3})([0-9]{2})','\1.\2.\3-\4');`
 
 	rows, err := db.Conn.Query(query, itemCpf)
 	if err != nil {
@@ -67,7 +67,7 @@ func (db Database) GetAllItemsByCpf(itemCpf string) (*models.ItemList, error) {
 // Get all valid items by Last Sale CNPJ
 func (db Database) GetAllItemsLastSale(lastSaleCnpj string) (*models.ItemList, error) {
 	list := &models.ItemList{}
-	query := `SELECT * FROM customer_data WHERE cnpj_loja_ultima_compra = $1;`
+	query := `SELECT * FROM customer_data WHERE cnpj_loja_ultima_compra = regexp_replace($1,'([0-9]{2})([0-9]{3})([0-9]{3})([0-9]{4})([0-9]{2})','\1.\2.\3/\4-\5');`
 
 	rows, err := db.Conn.Query(query, lastSaleCnpj)
 	if err != nil {
@@ -87,7 +87,7 @@ func (db Database) GetAllItemsLastSale(lastSaleCnpj string) (*models.ItemList, e
 // Get all valid items by frequent sale CNPJ
 func (db Database) GetAllItemsFrequentSale(frequentSaleCnpj string) (*models.ItemList, error) {
 	list := &models.ItemList{}
-	query := `SELECT * FROM customer_data WHERE cpf = $1;`
+	query := `SELECT * FROM customer_data WHERE cnpj_loja_mais_frequente = regexp_replace($1,'([0-9]{2})([0-9]{3})([0-9]{3})([0-9]{4})([0-9]{2})','\1.\2.\3/\4-\5');`
 
 	rows, err := db.Conn.Query(query, frequentSaleCnpj)
 	if err != nil {
@@ -133,9 +133,9 @@ func (db Database) GetInvalidRecordsCount() (models.Record, error) {
 }
 
 // Delete valid records table
-func (db Database) DeleteValidItems(itemId int) error {
+func (db Database) DeleteValidItems() error {
 	query := `DELETE FROM customer_data;`
-	_, err := db.Conn.Exec(query, itemId)
+	_, err := db.Conn.Exec(query)
 	switch err {
 	case sql.ErrNoRows:
 		return ErrNoMatch
@@ -145,9 +145,9 @@ func (db Database) DeleteValidItems(itemId int) error {
 }
 
 // Delete invalid records table
-func (db Database) DeleteInvalidItems(itemId int) error {
+func (db Database) DeleteInvalidItems() error {
 	query := `DELETE FROM customer_data_rejected;`
-	_, err := db.Conn.Exec(query, itemId)
+	_, err := db.Conn.Exec(query)
 	switch err {
 	case sql.ErrNoRows:
 		return ErrNoMatch
