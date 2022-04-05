@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	HOST = "localhost"
-	PORT = 5432
+	HOST = "db"
+	PORT = 5433
 )
 
 // ErrNoMatch is returned when we request a row that doesn't exist

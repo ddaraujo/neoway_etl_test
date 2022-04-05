@@ -7,13 +7,12 @@ ADD . /app
 WORKDIR /app
 
 # Fetch and build app
-#RUN go get github.com/EBKopec/etl_base_teste
-#RUN cd /build && git clone https://github.com/EBKopec/etl_base_teste.git
-RUN git clone https://github.com/ddaraujo/neoway_etl_test.git
+#RUN go get github.com/ddaraujo/neoway_etl_test
+#RUN git clone https://github.com/ddaraujo/neoway_etl_test.git
 #RUN cd /build/etl_base_teste/ && go build
 
 # Expose app port 
-EXPOSE 8088
+EXPOSE 8888
 
 # Run service entrypoint
 #ENTRYPOINT ["/app/neoway_etl_test"]

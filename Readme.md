@@ -19,11 +19,11 @@ git clone https://github.com/ddaraujo/neoway_etl_test.git
 
 ## Inicializando (Building Server)
 
+Antes de começar, inicie o serviço do Docker em seu computador.
+
 ```bash
-$ docker-compose stop server
-$ docker-compose build server
-$ docker-compose up --no-start server
-$ docker-compose start server
+$ cd neoway_etl_test
+$ docker compose up --build
 ```
 
 
