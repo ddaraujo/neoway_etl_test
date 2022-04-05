@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 
@@ -39,7 +40,7 @@ func getAllItemsByCpf(w http.ResponseWriter, r *http.Request) {
 	log.Println("Obtaining all valid items by CPF")
 	vars := mux.Vars(r)
 	cpf := vars["cpf"]
-	items, err := dbInstance.GetAllItemsByCpf(cpf)
+	items, err := dbInstance.GetAllItemsByCpf(sanitize(cpf))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(items)
@@ -54,7 +55,7 @@ func getAllItemsLastSaleCnpj(w http.ResponseWriter, r *http.Request) {
 	log.Println("Obtaining all valid items by last sale CNPJ")
 	vars := mux.Vars(r)
 	cnpj := vars["cnpj"]
-	items, err := dbInstance.GetAllItemsLastSale(cnpj)
+	items, err := dbInstance.GetAllItemsLastSale(sanitize(cnpj))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(items)
@@ -69,7 +70,7 @@ func getAllItemsFrequentSaleCnpj(w http.ResponseWriter, r *http.Request) {
 	log.Println("Obtaining all valid items by frequent sale CNPJ")
 	vars := mux.Vars(r)
 	cnpj := vars["cnpj"]
-	items, err := dbInstance.GetAllItemsFrequentSale(cnpj)
+	items, err := dbInstance.GetAllItemsFrequentSale(sanitize(cnpj))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(items)
@@ -106,15 +107,23 @@ func getInvalidRecordsCount(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete all valid items
-/*
 func deleteValidItems(w http.ResponseWriter, r *http.Request) {
 	err := dbInstance.DeleteValidItems()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	if err != nil {
-		if err == db.ErrNoMatch {
-			render.Render(w, r, ErrNotFound)
-		} else {
-			render.Render(w, r, ServerErrorRenderer(err))
-		}
 		return
 	}
-}*/
+	io.WriteString(w, `{"status": ok}`)
+}
+
+// Delete all invalid items
+func deleteInvalidItems(w http.ResponseWriter, r *http.Request) {
+	err := dbInstance.DeleteInvalidItems()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err != nil {
+		return
+	}
+	io.WriteString(w, `{"status": ok}`)
+}
