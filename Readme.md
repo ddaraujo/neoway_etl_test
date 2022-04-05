@@ -20,7 +20,8 @@ Antes de começar, inicie o serviço do Docker em seu computador.
 ```bash
 $ git clone https://github.com/ddaraujo/neoway_etl_test.git
 $ cd neoway_etl_test
-$ docker compose up --build
+$ docker-compose build --no-cache
+$ docker-compose up
 ```
 
 
