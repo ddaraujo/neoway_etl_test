@@ -1,15 +1,9 @@
--- FUNCTION: public.fc_valida_cnpj(character varying, boolean)
-
--- DROP FUNCTION IF EXISTS public.fc_valida_cnpj(character varying, boolean);
-
-CREATE OR REPLACE FUNCTION public.fc_valida_cnpj(
-	p_cnpj character varying,
-	p_fg_permite_nulo boolean DEFAULT false)
-    RETURNS boolean
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
+--
+-- Name: fc_valida_cnpj(character varying, boolean); Type: FUNCTION; Schema: public; Owner: postgres
+--
+CREATE FUNCTION public.fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean DEFAULT false) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $_$
 declare
     
     v_cnpj_invalidos character varying[10] 
@@ -70,28 +64,31 @@ begin
     return (v_resto_dv2 = v_cnpj_quebrado[c_posicao_dv2]);    
     
 end;
-$BODY$;
+$_$;
 
-ALTER FUNCTION public.fc_valida_cnpj(character varying, boolean)
-    OWNER TO nwpguser;
+ALTER FUNCTION public.fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean) OWNER TO postgres;
 
-COMMENT ON FUNCTION public.fc_valida_cnpj(character varying, boolean)
-    IS 'Funcao para validacao do CPF';
+--
+-- Name: FUNCTION fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean); Type: COMMENT; Schema: public; Owner: postgres
+--
+COMMENT ON FUNCTION public.fc_valida_cnpj(p_cnpj character varying, p_fg_permite_nulo boolean) IS 'CNPJ validation function';
 
 
+--
+-- Name: dm_cnpj; Type: DOMAIN; Schema: public; Owner: postgres
+--
+CREATE DOMAIN public.dm_cnpj AS character varying(22)
+	CONSTRAINT dm_cnpj_check CHECK (public.fc_valida_cnpj(VALUE, true));
 
--- FUNCTION: public.fc_valida_cpf(character varying, boolean)
+ALTER DOMAIN public.dm_cnpj OWNER TO postgres;
 
--- DROP FUNCTION IF EXISTS public.fc_valida_cpf(character varying, boolean);
+--
+-- Name: fc_valida_cpf(character varying, boolean); Type: FUNCTION; Schema: public; Owner: postgres
+--
 
-CREATE OR REPLACE FUNCTION public.fc_valida_cpf(
-	p_cpf character varying,
-	p_valida_nulo boolean DEFAULT false)
-    RETURNS boolean
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
+CREATE FUNCTION public.fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean DEFAULT false) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $_$
 declare
     
     v_cpf_invalidos character varying[10] 
@@ -150,35 +147,132 @@ v_cpf_quebrado := regexp_split_to_array(
     return (v_resto_dv2 = v_cpf_quebrado[c_posicao_dv2]);    
     
 end;
-$BODY$;
+$_$;
 
-ALTER FUNCTION public.fc_valida_cpf(character varying, boolean)
-    OWNER TO nwpguser;
+ALTER FUNCTION public.fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean) OWNER TO postgres;
 
-COMMENT ON FUNCTION public.fc_valida_cpf(character varying, boolean)
-    IS 'Função para validação do CNPJ';
+--
+-- Name: FUNCTION fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean); Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON FUNCTION public.fc_valida_cpf(p_cpf character varying, p_valida_nulo boolean) IS 'CPF validation function';
+
+--
+-- Name: dm_cpf; Type: DOMAIN; Schema: public; Owner: postgres
+--
+
+CREATE DOMAIN public.dm_cpf AS character varying(19)
+	CONSTRAINT dm_cpf_check CHECK (public.fc_valida_cpf(VALUE, true));
 
 
--- DOMAIN: public.dm_cnpj
+ALTER DOMAIN public.dm_cpf OWNER TO postgres;
 
--- DROP DOMAIN IF EXISTS public.dm_cnpj;
+--
+-- Name: fc_convert_money_to_real(character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
 
-CREATE DOMAIN public.dm_cnpj
-    AS character varying(14);
+CREATE FUNCTION public.fc_convert_money_to_real(ds_value character varying) RETURNS character varying
+    LANGUAGE sql
+    AS $_$
+select
+replace(trim($1),',','.');
+$_$;
 
-ALTER DOMAIN public.dm_cnpj OWNER TO nwpguser;
 
-ALTER DOMAIN public.dm_cnpj
-    ADD CONSTRAINT dm_cnpj_check CHECK (fc_valida_cnpj(VALUE, true));
+ALTER FUNCTION public.fc_convert_money_to_real(ds_value character varying) OWNER TO postgres;
 
-    -- DOMAIN: public.dm_cpf
+--
+-- Name: fc_insert_new_customer_data(); Type: FUNCTION; Schema: public; Owner: postgres
+--
 
--- DROP DOMAIN IF EXISTS public.dm_cpf;
+CREATE FUNCTION public.fc_insert_new_customer_data() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  IF (tg_op = 'UPDATE')
+    OR
+    (
+      tg_op ='INSERT'
+    )
+    THEN
+    -- All valid data
+    INSERT INTO customer_data
+                (
+                            cpf,
+                            PRIVATE,
+                            incompleto,
+                            dt_ultima_compra,
+                            vlr_ticket_medio,
+                            vlr_ticket_ultima_compra,
+                            cnpj_loja_mais_frequente,
+                            cnpj_loja_ultima_compra
+                )
+                (
+                       SELECT trim(substring(txt_dados_cliente FROM 1 FOR 19))                                     AS cpf,
+                              trim(substring(txt_dados_cliente FROM 20 FOR 12))::integer                           AS private,
+                              trim(substring(txt_dados_cliente FROM 32 FOR 12))::integer                           AS incompleto,
+                              trim(substring(txt_dados_cliente FROM 44 FOR 22))::date                              AS dt_ultima_compra,
+                              fc_convert_money_to_real(trim(substring(txt_dados_cliente FROM 66 FOR 22)))::real    AS vlr_ticket_medio,
+                              fc_convert_money_to_real(trim(substring(txt_dados_cliente FROM 88 FOR 24)))::real    AS vlr_ticket_ultima_compra,
+                              trim(substring(txt_dados_cliente FROM 112 FOR 20))                                   AS cnpj_loja_mais_frequente,
+                              trim(substring(txt_dados_cliente FROM 132 FOR 21))                                   AS cnpj_loja_ultima_compra
+                       FROM   imported_files
+                       WHERE  txt_dados_cliente NOT LIKE '%NULL%' -- Ignore NULL data
+                       AND    txt_dados_cliente NOT LIKE '%CPF%'); -- Ignore header
+    
+    -- All invalid data
+    INSERT INTO customer_data_rejected
+                (
+                            cpf,
+                            PRIVATE,
+                            incompleto,
+                            dt_ultima_compra,
+                            vlr_ticket_medio,
+                            vlr_ticket_ultima_compra,
+                            cnpj_loja_mais_frequente,
+                            cnpj_loja_ultima_compra
+                )
+                (
+                       SELECT trim(substring(txt_dados_cliente FROM 1 FOR 19))   AS cpf,
+                              trim(substring(txt_dados_cliente FROM 20 FOR 12))  AS private,
+                              trim(substring(txt_dados_cliente FROM 32 FOR 12))  AS incompleto,
+                              trim(substring(txt_dados_cliente FROM 44 FOR 22))  AS dt_ultima_compra,
+                              trim(substring(txt_dados_cliente FROM 66 FOR 22))  AS vlr_ticket_medio,
+                              trim(substring(txt_dados_cliente FROM 88 FOR 24))  AS vlr_ticket_ultima_compra,
+                              trim(substring(txt_dados_cliente FROM 112 FOR 20)) AS cnpj_loja_mais_frequente,
+                              trim(substring(txt_dados_cliente FROM 132 FOR 21)) AS cnpj_loja_ultima_compra
+                       FROM   imported_files
+                       WHERE  (
+                                     NOT PUBLIC.fc_valida_cpf(trim(substring(txt_dados_cliente FROM 1 FOR 19)))      -- Ignore invalid CPF
+                              OR     NOT PUBLIC.fc_valida_cnpj(trim(substring(txt_dados_cliente FROM 112 FOR 20)))   -- Ignore invalid CNPJ
+                              OR     NOT PUBLIC.fc_valida_cnpj(trim(substring(txt_dados_cliente FROM 132 FOR 21))))  -- Ignore invalid CNPJ
+                       AND    txt_dados_cliente NOT LIKE '%CPF%');  -- Ignore header
+    
+    -- Delete records from imported_Files after insertion on tables
+    DELETE FROM imported_files;
+    RETURN NEW;
+  END IF;
+  RETURN NULL;
+END;
+$$;
 
-CREATE DOMAIN public.dm_cpf
-    AS character varying(11);
+ALTER FUNCTION public.fc_insert_new_customer_data() OWNER TO postgres;
 
-ALTER DOMAIN public.dm_cpf OWNER TO nwpguser;
+--
+-- Name: remove_accent(text); Type: FUNCTION; Schema: public; Owner: postgres
+--
 
-ALTER DOMAIN public.dm_cpf
-    ADD CONSTRAINT dm_cpf_check CHECK (fc_valida_cpf(VALUE, true));
+CREATE FUNCTION public.remove_accent(p_text text) RETURNS text
+    LANGUAGE sql
+    AS $_$  
+ Select translate($1,  
+ 'áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',  
+ 'aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'   
+  );  
+ $_$;
+
+ALTER FUNCTION public.remove_accent(p_text text) OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
