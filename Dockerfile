@@ -3,13 +3,13 @@ FROM golang:latest
 
 #Set Workdir
 RUN mkdir /app
-ADD . /app
+#ADD . /app
 WORKDIR /app
 
 # Fetch and build app
 #RUN go get github.com/ddaraujo/neoway_etl_test
-#RUN git clone https://github.com/ddaraujo/neoway_etl_test.git
-#RUN cd /build/etl_base_teste/ && go build
+RUN git clone https://github.com/ddaraujo/neoway_etl_test.git
+RUN cd etl_base_teste && go build
 
 # Expose app port 
 EXPOSE 8888
