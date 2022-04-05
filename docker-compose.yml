@@ -8,10 +8,10 @@ services:
       - '9432:5432'
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-      # Inicialize database creating tables
-      - ./sql/init_tables.sql:/docker-entrypoint-initdb.d/sql/init_tables.sql
       # Create triggers
-      - ./sql/create_triggers.sql:/docker-entrypoint.initdb.d/sql/create_triggers.sql
+      - ./sql/create_triggers.sql:/docker-entrypoint.initdb.d/10-create_triggers.sql
+      # Inicialize database creating tables
+      - ./sql/init_tables.sql:/docker-entrypoint-initdb.d/20-init_tables.sql
       # Shared folder 
       - app-data:/tmp:z
 
