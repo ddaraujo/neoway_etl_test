@@ -1,8 +1,8 @@
 ## Pré-requisitos:
 
-Docker Versão 20.10.12.  
-Google Chrome Versão 99.0.4844.84 (Versão oficial).  
-Certifique-se de que as portas 8888 e 5433 não estão em uso no computador onde o sistema será executado.  
+* Docker Versão 20.10.12.  
+* Google Chrome Versão 99.0.4844.84 (Versão oficial).  
+* Certifique-se de que as portas 8888 e 5433 não estão em uso no computador onde o sistema será executado.  
 
 
 ## Premissas do Projeto
@@ -34,19 +34,19 @@ $ docker compose up --build
 
 ## Utilizando a API
 
-* **[GET] /items/valid**   ->  retorna todos os dados importados válidos
-* **[GET] /items/valid/cpf/{cpf}**   ->  retorna todos os dados importados válidos por CPF (Apenas números)
-* **[GET] /items/valid/lastSale/{cnpj}**   ->  retorna todos os dados importados válidos (última loja) por CNPJ
-* **[GET] /items/valid/frequentSale/{cnpj}**   ->  retorna todos os dados importados válidos (loja mais frequente) por CNPJ 
-* **[GET] /items/valid/count**   ->  retorna a quantidade de registros válidos
-* **[GET] /items/valid/delete**   ->  limpa a tabela de registros válidos
-* **[GET] /items/invalid**   ->  retorna todos os items importados inválidos (rejeitados)
-* **[GET] /items/invalid/count**   ->  retorna a quantidade de registros inválidos (rejeitados)
-* **[GET] /items/invalid/delete**   ->  limpa a tabela de registros inválidos
+* **[GET] /items/valid**   ->  retorna todos os dados importados válidos.
+* **[GET] /items/valid/cpf/{cpf}**   ->  retorna todos os dados importados válidos por CPF (Apenas números).
+* **[GET] /items/valid/lastSale/{cnpj}**   ->  retorna todos os dados importados válidos (última loja) por CNPJ.
+* **[GET] /items/valid/frequentSale/{cnpj}**   ->  retorna todos os dados importados válidos (loja mais frequente) por CNPJ.
+* **[GET] /items/valid/count**   ->  retorna a quantidade de registros válidos.
+* **[GET] /items/valid/delete**   ->  limpa a tabela de registros válidos.
+* **[GET] /items/invalid**   ->  retorna todos os items importados inválidos (rejeitados).
+* **[GET] /items/invalid/count**   ->  retorna a quantidade de registros inválidos (rejeitados).
+* **[GET] /items/invalid/delete**   ->  limpa a tabela de registros inválidos.
 
 ## Conexão ao database
 
-Para fins de avaliação, o database estará exposto fora do docker, porém esta abordagem não é recomendada em ambiente de produção, onde o acesso aos dados deverá ser apenas via API.
+Para fins de avaliação o database estará exposto fora do docker, porém esta abordagem não é recomendada em ambiente de produção, onde o acesso aos dados deverá ser apenas via API.
 
 **host:** localhost  
 **porta:** 9432  
@@ -56,8 +56,8 @@ Para fins de avaliação, o database estará exposto fora do docker, porém esta
 ## Estrutura
 ### Database
 #### Tabelas
-* **customer_data** - Dados válidos importados já contendo validação de CPF e CNPJ
-* **customer_data_rejected** - Dados rejeitados (inválidos) que não passaram pela validacao de campos
+* **customer_data** - Dados válidos importados já contendo validação de CPF e CNPJ.
+* **customer_data_rejected** - Dados rejeitados (inválidos) que não passaram pela validacao de campos.
 * **imported_files** - Dados RAW importados do arquivo antes da sanitização e classificação. São removidos após o fim da importação.
 
 #### Projeto
@@ -88,11 +88,11 @@ Para fins de avaliação, o database estará exposto fora do docker, porém esta
 ```
 
 **db:** Pacote responsável pela interação direta com o banco de dados, separando as camadas de acesso ao DB do restante da aplicação.  
-**handler:** Cria os handlers do app e as rodas da API utilizando gorilla/mux.  
+**handler:** Cria os handlers do app e as rotas da API utilizando gorilla/mux.  
 **models:** Structs de objetos para acesso e consulta ao database ou transformados em formato JSON.  
-**sql:** Scripts de inicializacao das tabelas, funcões, triggers, etc.  
+**sql:** Scripts de inicialização das tabelas, funcões, triggers, etc.  
 **.env:** Variáveis de ambiente utilizadas pela aplicação (conexão ao database).  
-**docker-compose:** Define as dependencias dos microserviços do app (app e Database).  
+**docker-compose:** Define as dependências dos microserviços do app (app e Database).  
 **Dockerfile:** Imagem base e comandos para inicialização do app.  
 **index.html:** Página simples para upload do arquivo.  
 **main.go:** Entrypoint da app. Responsável pela inicialização do database, leitura de variáveis do .env e inicializar/encerrar a API e handlers.  
