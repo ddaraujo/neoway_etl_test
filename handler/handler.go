@@ -48,7 +48,7 @@ func NewHandler(db db.Database) http.Handler {
 }
 
 // HTML Templates
-var templates = template.Must(template.ParseFiles("handler/index.html"))
+var templates = template.Must(template.ParseFiles("index.html"))
 
 // Display HTML template
 func displayTemplate(w http.ResponseWriter, page string, data interface{}) {
