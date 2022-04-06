@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -16,9 +18,6 @@ var dbInstance db.Database
 
 func NewHandler(db db.Database) http.Handler {
 	dbInstance = db
-
-	//router.MethodNotAllowed(methodNotAllowedHandler)
-	//router.NotFound(notFoundHandler)
 
 	fmt.Println("Start handling requests")
 
@@ -47,11 +46,11 @@ func NewHandler(db db.Database) http.Handler {
 	return myRouter
 }
 
-// HTML Templates
-var templates = template.Must(template.ParseFiles("handler/index.html"))
-
 // Display HTML template
 func displayTemplate(w http.ResponseWriter, page string, data interface{}) {
+	dir, _ := os.Getwd()
+	var templates = template.Must(template.ParseFiles(filepath.Join(dir, "handler", "index.html")))
+	//var templates = template.Must(template.ParseFiles("handler/index.html"))
 	templates.ExecuteTemplate(w, page+".html", data)
 }
 
