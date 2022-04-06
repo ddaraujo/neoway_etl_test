@@ -48,7 +48,7 @@ func NewHandler(db db.Database) http.Handler {
 func displayTemplate(w http.ResponseWriter, page string, data interface{}) {
 	//dir, _ := os.Getwd()
 	//var templates = template.Must(template.ParseFiles(filepath.Join(dir, "handler", "index.html")))
-	var templates = template.Must(template.ParseFiles("handler/index.html"))
+	var templates = template.Must(template.ParseFiles("index.html"))
 	templates.ExecuteTemplate(w, page+".html", data)
 }
 
