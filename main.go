@@ -16,8 +16,10 @@ import (
 )
 
 func main() {
+	dir, _ := os.Getwd()
+
 	// Read .ENV file
-	envErr := godotenv.Load(".env")
+	envErr := godotenv.Load(dir + ".env")
 	if envErr != nil {
 		log.Fatalf("Some error occured. Err: %s", envErr)
 	}
