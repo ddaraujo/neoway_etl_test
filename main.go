@@ -32,7 +32,7 @@ func main() {
 	for {
 		database, err := db.Initialize(dbUser, dbPassword, dbName)
 		if err != nil {
-			if count < 5 {
+			if count < 10 {
 				log.Println("Error connectiong to database. Retrying...")
 				time.Sleep(5 * time.Second)
 				count++
