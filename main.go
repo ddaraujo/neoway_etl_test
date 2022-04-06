@@ -27,7 +27,7 @@ func main() {
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_DB")
 
-	// Initialize database
+	// Initialize database (5 retries in case of database connection failed)
 	count := 0
 	for {
 		database, err := db.Initialize(dbUser, dbPassword, dbName)
