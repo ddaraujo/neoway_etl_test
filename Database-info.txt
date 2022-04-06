@@ -1,0 +1,51 @@
+=============
+Database Info
+=============
+
+Scripts:
+    sql/init-tables.sql
+        Tabelas:
+            - customer_data
+            - customer_data_rejected
+            - imported_files
+		Triggers:
+			 - trg_import_customer_data
+
+
+	sql/init-functions-triggers.sql
+	    Funções:
+            - fc_valida_cnpj
+            - fc_valida_cpf
+            - fc_convert_money_to_real
+            - fc_insert_new_customer_data
+            - fc_remove_accent (Criada mas nao necessária no projeto)
+	    Domínios:
+		    - dm_cnpj;
+	    	- dm_cpf.
+		
+============================        
+Lógica de inserção dos dados
+============================
+
+1 - O arquivo é carregado via API para o servidor na pasta /tmp (Comum entre os 2 containers)
+2 - A função PgUploadData é resposável por utilizar o método COPY do Postgres para inserir os dados na tabela "imported_files" sem nenhu tratamento.
+3 - Após a inserção, a trigger trg_import_customer_data executa as seguintes ações:
+    3.1 - Insere os dados válidos (CPF, CNPJ válidos e dados não nulos) na tabela customer_data.
+    3.2 - Os demais dados nao validados anteriormente são inseridos na tabela customer_data_rejected.
+    3.3 - Os dados brutos da tabela imported_files são removidos pois não são mais necessários uma vez que todos os demais foram tratados e divididos em suas respectivas colunas.
+
+=====================
+Descrição das funções
+=====================
+
+* fc_valida_cnpj e fc_valida_cnpj:  são utilizadas para validação de constraints em seus respectivos domains (dm_cnpj e dm_cpf) e também na função fc_insert_new_customer_data para validar os dados de CNPJ e CPF. 
+* fc_insert_new_customer_data: função que faz a separação e validação dos dados. Acionada pela trigger trg_import_customer_data.
+* fc_convert_money_to_real: Converte o separador de decimais de virgula para ponto (Padrão do valor "real" no postgres).
+* fc_remove_accent: remove acentuação da string. Não utilizada no projeto pois nao se aplica ao tipo de dados fornecidos.
+
+================================
+Premissas de Tratamento de Dados
+================================
+
+* A aplicação não deve assumir nenhum tipo de correção nos dados (ex.: Linhas quebradas ou ausência de colunas pois não há como inferir a integridade do dado).
+* Não há necessidade de validação de letras maiúsculas ou acentuação pois os dados são basicamente numéricos (em suas variações). Isto geraria um consumo desnecessário de recursos de processamento.
