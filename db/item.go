@@ -16,7 +16,7 @@ func (db Database) GetAllValidItems() (*models.ItemList, error) {
 	}
 	for rows.Next() {
 		var item models.Item
-		err := rows.Scan(&item.Cpf, &item.Private, &item.Incompleto, &item.DataUltimaCompra, &item.ValorTicketMedio, &item.CnpjLojaMaisFrequente, &item.DataUltimaCompra, &item.CnpjLojaUltimaCompra)
+		err := rows.Scan(&item.Cpf, &item.Private, &item.Incompleto, &item.DataUltimaCompra, &item.ValorTicketMedio, &item.ValorTicketUltimaCompra, &item.CnpjLojaMaisFrequente, &item.CnpjLojaUltimaCompra)
 		if err != nil {
 			return list, err
 		}
@@ -35,7 +35,7 @@ func (db Database) GetAllInvalidItems() (*models.ItemList, error) {
 	}
 	for rows.Next() {
 		var item models.Item
-		err := rows.Scan(&item.Cpf, &item.Private, &item.Incompleto, &item.DataUltimaCompra, &item.ValorTicketMedio, &item.CnpjLojaMaisFrequente, &item.DataUltimaCompra, &item.CnpjLojaUltimaCompra)
+		err := rows.Scan(&item.Cpf, &item.Private, &item.Incompleto, &item.DataUltimaCompra, &item.ValorTicketMedio, &item.ValorTicketUltimaCompra, &item.CnpjLojaMaisFrequente, &item.CnpjLojaUltimaCompra)
 		if err != nil {
 			return list, err
 		}
