@@ -2,7 +2,7 @@
 
 * Docker Versão 20.10.12.  
 * Google Chrome Versão 99.0.4844.84 (Versão oficial).  
-* Certifique-se de que as portas 8888 e 5433 não estão em uso no computador onde o sistema será executado.  
+* Certifique-se de que as portas 8888 e 9432 não estão em uso no computador onde o sistema será executado.  
 
 
 ## Premissas do Projeto
@@ -65,10 +65,10 @@ Para fins de avaliação o database estará exposto fora do docker, porém esta 
 #### Projeto
 ```bash
 ├── db
-│   ├── db.go         
+│   ├── db.go
 |   ├── file.go
 │   └── item.go
-├── handler                        
+├── handler
 │   ├── files.go
 │   ├── handler.go
 │   └── items.go
@@ -80,6 +80,7 @@ Para fins de avaliação o database estará exposto fora do docker, porém esta 
 │   ├── create_triggers.sql
 │   ├── init_tables.sql
 ├── .env
+├── Database-info.txt
 ├── docker-compose.yml
 ├── Dockerfile
 ├── go.mod
@@ -98,3 +99,4 @@ Para fins de avaliação o database estará exposto fora do docker, porém esta 
 **Dockerfile:** Imagem base e comandos para inicialização do app.  
 **index.html:** Página simples para upload do arquivo.  
 **main.go:** Entrypoint da app. Responsável pela inicialização do database, leitura de variáveis do .env e inicializar/encerrar a API e handlers.  
+**Database-info.txt:** Documentação da estrutura relacional.   
