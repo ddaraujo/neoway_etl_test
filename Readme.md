@@ -12,6 +12,7 @@
 * A aplicação não deve assumir nenhum tipo de correção nos dados (ex.: Linhas quebradas ou ausência de colunas pois não há como inferir a integridade do dado).
 * Os arquivos importados serão inseridos na tabela "imported_files" e serão removidos ao final da importação.
 * Não há necessidade de validacao de letras maiúsculas ou acentuação pois os dados são basicamente numéricos (em suas variações). Isto geraria um consumo desnecessário de recursos de processamento. Serão validados apenas o CNPJ e CPF.
+* A UI não foi foco desse projeto, pois a idéia é demonstrar a importação leitura de dados via API, não sua apresentação. Sendo assim no upload consta apenas uma interface simples mas funcional.
 
 ## Inicializando (Building Server)
 
