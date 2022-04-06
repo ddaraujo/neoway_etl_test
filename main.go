@@ -19,7 +19,7 @@ func main() {
 	dir, _ := os.Getwd()
 
 	// Read .ENV file
-	envErr := godotenv.Load(dir + ".env")
+	envErr := godotenv.Load(dir + "/neoway_etl_test/.env")
 	if envErr != nil {
 		log.Fatalf("Some error occured. Err: %s", envErr)
 	}
