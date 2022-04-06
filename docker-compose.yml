@@ -9,7 +9,7 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       # Create triggers
-      - ./sql/init_triggers.sql:/docker-entrypoint-initdb.d/10-init_triggers.sql
+      - ./sql/init_triggers.sql:/docker-entrypoint-initdb.d/10-init-functions-triggers.sql
       # Create tables
       - ./sql/init_tables.sql:/docker-entrypoint-initdb.d/20-init_tables.sql
       # Shared folder 
