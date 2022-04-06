@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -48,9 +46,9 @@ func NewHandler(db db.Database) http.Handler {
 
 // Display HTML template
 func displayTemplate(w http.ResponseWriter, page string, data interface{}) {
-	dir, _ := os.Getwd()
-	var templates = template.Must(template.ParseFiles(filepath.Join(dir, "handler", "index.html")))
-	//var templates = template.Must(template.ParseFiles("handler/index.html"))
+	//dir, _ := os.Getwd()
+	//var templates = template.Must(template.ParseFiles(filepath.Join(dir, "handler", "index.html")))
+	var templates = template.Must(template.ParseFiles("handler/index.html"))
 	templates.ExecuteTemplate(w, page+".html", data)
 }
 
