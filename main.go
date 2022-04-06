@@ -58,6 +58,8 @@ func main() {
 
 		log.Println(fmt.Sprint(<-ch))
 		log.Println("Stopping API server.")
+
+		break
 	}
 
 }
