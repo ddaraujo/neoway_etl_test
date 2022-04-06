@@ -22,10 +22,6 @@ type Database struct {
 
 // Initialize database...
 func Initialize(username, password, database string) (Database, error) {
-	//retries := 0
-	//timeout := 5
-
-	//for retries <= 5 {
 	log.Println("Database connection initiating...")
 	db := Database{}
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
@@ -33,19 +29,13 @@ func Initialize(username, password, database string) (Database, error) {
 
 	conn, err := sql.Open("postgres", dsn)
 	if err != nil {
-		log.Println("Connection Error")
-		log.Println(err)
 		return db, err
 	}
 	db.Conn = conn
 	err = db.Conn.Ping()
 	if err != nil {
-		log.Println("Ping error")
-		log.Println(err)
 		return db, err
 	}
 	log.Println("Database connection established")
 	return db, nil
-	//}
-
 }

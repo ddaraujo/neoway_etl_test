@@ -30,6 +30,7 @@ func main() {
 	// Initialize database
 	database, err := db.Initialize(dbUser, dbPassword, dbName)
 	if err != nil {
+		log.Println("Erro inicializando o database")
 		log.Fatalf("Could not set up database (error): %v", err)
 	}
 	defer database.Conn.Close()
